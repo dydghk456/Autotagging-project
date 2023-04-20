@@ -21,7 +21,7 @@ class AutoTagger():
 
     def tag(self, target_path, print_face=True, write_json=True):
         #calculate similarity between images in db
-        similarity = self.model.find(img_path = target_path, db_path = self.vector_path, enforce_detection=False)
+        similarity = self.model.find(img_path = target_path, db_path = self.vector_path, enforce_detection=True)
         #count number of faces in image
         target_num = len(similarity)
         results = pd.DataFrame()
