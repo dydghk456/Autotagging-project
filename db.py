@@ -8,22 +8,22 @@ class DB():
         self.c = self.conn.cursor()
 
     def insert_person(self, name):
-        name = unicodedata.normalize('NFD', name)
-        self.c.execute('SELECT * FROM persons WHERE name=?', (name,))
+        name = unicodedata.normalize('NFC', name)
+        self.c.execute('SELECT * FROM people WHERE name=?', (name,))
         exists = self.c.fetchone()
 
-        self.c.execute("SELECT MAX(uid) FROM persons")
+        self.c.execute("SELECT MAX(uid) FROM people")
         max_uid = self.c.fetchone()[0]
 
         if not exists:
-            self.c.execute('INSERT INTO persons (name, uid) VALUES (?, ?)', (name, max_uid+1))
+            self.c.execute('INSERT INTO people (name, uid) VALUES (?, ?)', (name, max_uid+1))
             self.conn.commit()
             return max_uid+1
         else:
             return -1
 
     def show_people(self):
-        self.c.execute("SELECT name FROM persons")
+        self.c.execute("SELECT name FROM people")
         results = self.c.fetchall()
         people = [result[0] for result in results]
         print("People in the database:")
@@ -31,7 +31,7 @@ class DB():
 
     def check_exists(self, name):
         name = unicodedata.normalize('NFD', name)
-        self.c.execute("SELECT name FROM persons WHERE name=?", (name,))
+        self.c.execute("SELECT name FROM people WHERE name=?", (name,))
         result = self.c.fetchone()
         if not result:
             print(f"{name} is not in the database.")
