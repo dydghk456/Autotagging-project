@@ -1,12 +1,10 @@
-import json
-import os, re
+import json, os, re, cv2
 from PIL import ImageFont, ImageDraw, Image
-import cv2
 import numpy as np
-from google.colab.patches import cv2_imshow
-from db import DB
-
 import pandas as pd
+from google.colab.patches import cv2_imshow
+
+from db import DB
 pd.set_option('display.max_colwidth', None)
 
 
@@ -20,19 +18,22 @@ class AutoTagger():
         self.font = ImageFont.truetype("/content/drive/MyDrive/chang/fonts/NanumGothic.ttf", self.font_size)
         self.people_db = DB(people_db_path)
 
-    def tag(self, target_path, print_face=True, write_json=True, enforce_detection=True):
+    def tag(self, target_path, similarity = "cosine", print_face=True, write_json=True, enforce_detection=True):
         #calculate similarity between images in db
-        similarity = self.model.find(img_path = target_path, db_path = self.vector_path, enforce_detection=enforce_detection)
-        #count number of faces in image
+        similarity = self.model.find(img_path = target_path, db_path = self.vector_path, distance_metric = similarity, silent=True,enforce_detection=enforce_detection)
+        #count the number of faces in image
         target_num = len(similarity)
         results = pd.DataFrame()
         #for each face in image, append found person in db
         for i in range(target_num):
-            similarity[i] = similarity[i].loc[0:0]
+            #there is no matched person in db
+            if len(similarity[i]) < 1 :
+                result = pd.DataFrame(data={'identity': 'not_matched', 'source_x':0, 'source_y':0, 'source_w':0, 'source_h':0, f"VGG_FACE_{similarity}": -1, 'target_img':target_path, 'matched_uid':-1, 'mathced_name':'none'}, index=[0])
+            similarity[i] = similarity[i].iloc[0:1]
             similarity[i]['target_img'] = target_path
-            similarity[i]['matched_uid'] = similarity[i]['identity'].str.split('uid=|[_]|[0-9]+.jpg').apply(lambda x : x[2])
+            similarity[i]['matched_uid'] = similarity[i]['identity'].str.split('uid=|[_]|[0-9]+.jpg').apply(lambda x : x[3])
             similarity[i]['matched_name'] = similarity[i]['identity'].str.split('uid=|[_]|[0-9]+.jpg').apply(lambda x: x[-2])
-            results = results.append(similarity[i].loc[0])
+            results = results.append(similarity[i].iloc[0:1])
         
         #if print_face is true, show image
         if(print_face):
@@ -75,10 +76,11 @@ class AutoTagger():
     def check_person_exists(self, name):
         self.people_db.check_exists(name)
 
-    def calc_metrics(self, target_path):
+    def calc_metrics(self, target_path, similarity = "cosine"):
         img_path = os.listdir(target_path)
         total_results = pd.DataFrame()
         for img in img_path:
+            
             #if file is not jpg image, or there are multiple or no faces, skip prediction
             if os.path.isfile(target_path+"/"+img) and img.lower().endswith(('.jpg','.jpeg')):
                 faces = self.model.extract_faces(img_path=target_path+"/"+img, enforce_detection=False)
@@ -86,12 +88,13 @@ class AutoTagger():
                     continue
                 else:
                     #find matched person in db, and write whether matching is correct in 'correct' column in results
-                    result = self.tag(target_path+"/"+img, print_face=False, write_json=False, enforce_detection=False)
+                    result = self.tag(target_path+"/"+img, similarity=similarity, print_face=False, write_json=False, enforce_detection=False)
                     parsed_img = re.split('uid=|[_]|[0-9]+.jpg', img)
                     result['target_uid'] = parsed_img[1]
                     result['target_name'] = parsed_img[-2]
                     result['correct'] = (result['target_uid'] == result['matched_uid'])
-                    total_results = total_results.append(result)
+                    total_results = total_results.append(result, ignore_index = True)
+      
         metrics = {}
         #calculate precision
         metrics['precision'] = total_results['correct'].sum()/len(total_results)

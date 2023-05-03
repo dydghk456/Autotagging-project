@@ -1,5 +1,4 @@
-import sqlite3
-import unicodedata
+import sqlite3, unicodedata
 
 class DB():
 
@@ -30,7 +29,7 @@ class DB():
         print(people)
 
     def check_exists(self, name):
-        name = unicodedata.normalize('NFD', name)
+        name = unicodedata.normalize('NFC', name)
         self.c.execute("SELECT name FROM people WHERE name=?", (name,))
         result = self.c.fetchone()
         if not result:
