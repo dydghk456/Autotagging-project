@@ -15,8 +15,7 @@ $ pip install -e .
 >```
 
 3. Import DeepFace and create Autotagger
-```python
-from deepface 
+```python 
 autotagger = AutoTagger(DeepFace, 
                         vector_path = "./template", 
                         json_path = "./jsons", 
