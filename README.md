@@ -16,6 +16,7 @@ $ pip install -e .
 
 3. Import DeepFace and create Autotagger
 ```python
+from deepface 
 autotagger = AutoTagger(DeepFace, 
                         vector_path = "./template", 
                         json_path = "./jsons", 
@@ -29,6 +30,7 @@ autotagger.tag(target_path="path_to_image", similarity="eucliedan_l2", k=8)
 similarity means distance metric and default is cosine.
 k means value of k in K-Nearest Neighbor and shows good results when k=8.
 
+You can run Autotagging by simply running sample.ipynb in notebook.
 
 References
 ----------
