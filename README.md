@@ -16,14 +16,17 @@ $ pip install -e .
 
 3. Import DeepFace and create Autotagger
 ```python
-autotagger = Autotagger(DeepFace, vector_path, json_path,
-			people_db_path, model_name)
+autotagger = AutoTagger(DeepFace, 
+                        vector_path = "./template", 
+                        json_path = "./jsons", 
+                        people_db_path = "./db/people.db", 
+                        model_name="resnet34_finetune")
 ```
 4. Use tag function of Autotagger to tag people in image.
 ```python
-autotagger.tag(target_path="path_to_image", similarity="eucliedan_l2", k)
+autotagger.tag(target_path="path_to_image", similarity="eucliedan_l2", k=8)
 ```
-similarity means distance metric and default is cosine
+similarity means distance metric and default is cosine.
 k means value of k in K-Nearest Neighbor and shows good results when k=8.
 
 
