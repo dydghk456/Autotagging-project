@@ -28,9 +28,10 @@ autotagger = AutoTagger(DeepFace,
 autotagger.tag(target_path="path_to_image", similarity="eucliedan_l2", k=8)
 ```
 similarity means distance metric and default is cosine.
+
 k means value of k in K-Nearest Neighbor and shows good results when k=8.
 
-You can run Autotagging by simply running sample.ipynb in notebook.
+You can run Autotagging by simply following sample.ipynb in notebook.
 
 References
 ----------
