@@ -1,0 +1,5 @@
+tensorflow==2.12.0
+bcolz-zipline==1.2.6
+sklearn2
+PyYAML
+tqdm

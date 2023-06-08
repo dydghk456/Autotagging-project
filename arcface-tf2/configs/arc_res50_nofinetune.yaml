@@ -1,0 +1,21 @@
+# general
+batch_size: 64
+input_size: 112
+embd_shape: 512
+sub_name: 'res50_nofinetune'
+backbone_type: 'ResNet50' # 'ResNet50', 'MobileNetV2'
+head_type: ArcHead # 'ArcHead', 'NormHead'
+is_ccrop: False # central-cropping or not
+
+# train
+train_dataset: '/content/drive/MyDrive/chang/arcface-tf2/data/bin_v2.tfrecord'
+binary_img: True
+num_classes: 1006
+num_samples: 7884
+epochs: 5
+base_lr: 0.0001
+w_decay: !!float 5e-4
+save_steps: 200
+
+# test
+test_dataset: '/content/drive/MyDrive/chang/arcface-tf2/test_dataset'
