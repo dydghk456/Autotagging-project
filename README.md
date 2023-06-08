@@ -35,4 +35,4 @@ You can run Autotagging by simply following sample.ipynb in notebook.
 References
 ----------
 * DeepFace: <https://github.com/serengil/deepface>
-
+* arcface-tf2 : <https://github.com/peteryuX/arcface-tf2>
