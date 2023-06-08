@@ -17,7 +17,7 @@ class AutoTagger():
         self.vector_path = vector_path
         self.json_path = json_path
         self.font_size = 12
-        self.font = ImageFont.truetype("/content/drive/MyDrive/chang/fonts/NanumGothic.ttf", self.font_size)
+        self.font = ImageFont.truetype("./fonts/NanumGothic.ttf", self.font_size)
         self.model_name = model_name
         self.people_db = DB(people_db_path)
         with open(f"./template/representations_{model_name}.pkl", "rb") as f:
