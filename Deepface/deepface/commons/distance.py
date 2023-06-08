@@ -29,6 +29,17 @@ def findEuclideanDistance(source_representation, test_representation):
     euclidean_distance = np.sqrt(euclidean_distance)
     return euclidean_distance
 
+def findEuclideanDistance_v2(source_representation, test_representation):
+    if isinstance(source_representation, list):
+        source_representation = np.array(source_representation)
+
+    if isinstance(test_representation, list):
+        test_representation = np.array(test_representation)
+
+    euclidean_distance = source_representation - test_representation
+    euclidean_distance = np.sum(np.multiply(euclidean_distance, euclidean_distance), axis=1)
+    euclidean_distance = np.sqrt(euclidean_distance)
+    return euclidean_distance
 
 def l2_normalize(x):
     return x / np.sqrt(np.sum(np.multiply(x, x)))
@@ -48,7 +59,7 @@ def findThreshold(model_name, distance_metric):
         "OpenFace": {"cosine": 0.10, "euclidean": 0.55, "euclidean_l2": 0.55},
         "DeepFace": {"cosine": 0.23, "euclidean": 64, "euclidean_l2": 0.64},
         "DeepID": {"cosine": 0.015, "euclidean": 45, "euclidean_l2": 0.17},
-        "resnet34_finetune": {"cosine": 0.68, "euclidean": 4.15, "euclidean_l2": 1.5, "proba":1.0},
+        "resnet34_finetune": {"cosine": 0.68, "euclidean": 4.15, "euclidean_l2": 1.2, "proba":1.0},
         "resnet34_normhead": {"cosine": 0.68, "euclidean": 4.15, "euclidean_l2": 1.5, "proba":1.0},
     }
 

@@ -20,10 +20,18 @@ class AutoTagger():
         self.font = ImageFont.truetype("/content/drive/MyDrive/chang/fonts/NanumGothic.ttf", self.font_size)
         self.model_name = model_name
         self.people_db = DB(people_db_path)
-
+        with open(f"./template/representations_{model_name}.pkl", "rb") as f:
+            representations = pickle.load(f)
+        self.df = pd.DataFrame(representations, columns=["identity", f"{model_name}_representation"])
+        temp = []
+        for name, embed in representations:
+            temp.append(embed)
+        temp = np.array(temp)
+        self.embeddings = temp / np.reshape(np.sqrt(np.sum(np.multiply(temp, temp), axis=1)), (-1,1))
+        
 
     def tag(self, target_path, similarity = "cosine", print_face=True, write_json=True, enforce_detection=True, k=1):
-        similarity = self.model.find(img_path = target_path, db_path = self.vector_path, distance_metric = similarity, model_name=self.model_name, silent=True,enforce_detection=enforce_detection)
+        similarity = self.model.find_v2(img_path = target_path, db_path = self.vector_path, embeds=self.embeddings, df=self.df, distance_metric = similarity, model_name=self.model_name, silent=False,enforce_detection=enforce_detection)
         
         target_num = len(similarity)
         results = pd.DataFrame()
@@ -147,4 +155,3 @@ class AutoTagger():
             for k in knn:
                 metrics[f"knn_{k}_precision"] = total_results[f"knn_{k}_correct"].sum()/len(total_results)
         return metrics, total_results
-    
